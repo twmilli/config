@@ -1,0 +1,156 @@
+ZSH_THEME="powerlevel9k/powerlevel9k"
+DEFAULT_USER="taylormilliman"
+# autocomplete
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+export PATH=$PATH:~/Thumbtack/website/vendor/php/composer/vendor/bin
+
+# Go Setup
+export GOROOT="/usr/local/Cellar/go/1.13.4/libexec/"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+
+export GOPATH=$HOME/go
+export GOBIN=$GOPATH/bin
+PATH="$PATH:$HOME/go/bin"
+
+alias cdgo="cd ~/go/src/github.com/thumbtack/go/"
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/taylormilliman/.oh-my-zsh"
+
+# how often to auto-update (in days).
+export UPDATE_ZSH_DAYS=7
+
+# Uncomment the following line to enable command auto-correction.
+ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+
+# Which plugins would you like to load?
+# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(
+  git
+)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# ssh
+export SSH_KEY_PATH="~/.ssh/rsa_id"
+
+#ALIAS
+okta-login() {
+	if [[ -z "$1" ]]; then
+	>&2 echo 'Usage: okta-login <profile>';
+	return 1;
+	fi
+	export OKTA_PROFILE=$1
+	export AWS_PROFILE=$1_source
+	~/.okta/login
+}
+
+alias ol="okta-login admin"
+alias g="git"
+alias gbr="git branch | grep -v "master" | xargs git branch -D"
+alias gs="git status"
+alias gg="git grep"
+alias gp="git pull"
+alias y="yoda"
+alias yr="yoda restart"
+alias ys="yoda status"
+alias yrs="yoda sync --project website"
+alias yra="yoda restart agonas"
+alias hr="git reset --hard origin/master"
+alias yrw="yoda restart website"
+alias yp="yoda purge && yoda init"
+
+tgg() {
+	./build.py build go "$1" $GOPATH/src/github.com/thumbtack/go
+}
+
+tgw() {
+	./build.py build php "$1" ~/Thumbtack/website
+}
+
+unsetopt correct_all
+
+cr() {
+	git add . && git commit --amend --no-edit && git review -f
+}
+
+fix() {
+ git review -d "$1"
+}
+
+yla() {
+	y config add configured_services seo && y config add built_services seo && y config add configured_services agonas && y config add built_services agonas && y restart seo && y restart agonas
+}
+
+unlocal() {
+	for var in "$@"
+	do
+		yoda config remove configured_services $var && yoda config remove built_services $var && yoda restart $var
+	done
+}
+
+alias sim="go run ${GOPATH}/src/github.com/thumbtack/go/simmanager/main.go"
+
+export PATH=/usr/local/opt/postgresql@9.6/bin:$PATH
+export NVM_DIR="/Users/taylormilliman/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+export TT_TOPHAT_DIR="/Users/taylormilliman/Thumbtack/tophat"
+export PATH=/usr/local/opt/postgresql@9.6/bin:$PATH
+export TT_WEBSITE_DIR="/Users/taylormilliman/Thumbtack/website"
+export TT_PG_SCHEMA_DIR="/Users/taylormilliman/Thumbtack/postgres-schema"
+export TT_TOPHAT_DIR="/Users/taylormilliman/Thumbtack/tophat"
+export PATH="/usr/local/opt/go@1.13/bin:$PATH"
+export PATH="/anaconda3/bin:$PATH"
+
+export PATH=/opt/thumbtack/dp-sdk/google-cloud-sdk/bin:$PATH
+export PATH=$PATH:$HOME/bin
+export HADOOP_HOME="/opt/thumbtack/dp-sdk/hadoop"
+
+export SPARK_HOME="/opt/thumbtack/dp-sdk/spark"
+
+export SPARK_DIST_CLASSPATH="$(/opt/thumbtack/dp-sdk/hadoop/bin/hadoop classpath)"
+
+export PATH=$SPARK_HOME/bin:$PATH
+export SBT_OPTS="-Dsbt.override.build.repos=true -Dsbt.boot.credentials=/Users/taylormilliman/.sbt/credentials.properties"
+export SBT_OPTS='-Xmx8G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -Xss2M -Duser.timezone=GMT'
+tt() {
+    if [ "$1" != "" ] # or better, if [ -n "$1" ]
+    then
+        if [ "$1" = "go" ]
+        then
+                cd ~/go
+        elif [ "$1" = "thrift" ]
+        then
+                cd ~/Thumbtack/thrift-definitions
+        else
+                cd ~/Thumbtack/$1
+        fi
+    else
+        cd ~/Thumbtack
+    fi
+}
+. /anaconda3/etc/profile.d/conda.sh
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/taylormilliman/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/taylormilliman/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/taylormilliman/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/taylormilliman/google-cloud-sdk/completion.zsh.inc'; fi
